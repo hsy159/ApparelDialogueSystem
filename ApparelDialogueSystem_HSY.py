@@ -41,6 +41,16 @@ def ask_reason(request): #환불 방법에 대해 물으면 환불 이유를 되
     context['ask'] = 'What is the reason of refund?'
     return context
 
+def delivery_ask(request): #배송조회를 하면 배송번호를 묻는 함수입니다.
+    request['context'] = {} 
+    #이전의 context가 남아있으면 엉뚱한 대답을 하기 때문에 초기화를 해줍니다.
+    context = request['context']
+    entities = request['entities']
+
+    context['delivery_ask'] = 'Please enter valid invoice or tracking number.' # 배송 조회번호를 입력하라고 대답합니다.
+    return context
+
+
 def refund(request): #환불의 이유에 대한 반응을 결정하는 함수입니다.
     request['context'] = {} 
     #이전의 context가 남아있으면 엉뚱한 대답을 하기 때문에 초기화를 해줍니다.
@@ -54,6 +64,18 @@ def refund(request): #환불의 이유에 대한 반응을 결정하는 함수�
         context['change of my mind'] = 'change of my mind'
     return context
 
+def delivery_answer(request): # 배송 조회번호가 1234거나 5678이면 2시에 도착한다하고 아니면 잘못됐다고 출력합니다.
+    request['context'] = {}
+    context = request['context']
+    entities = request['entities']
+    
+    delivery_num = first_entity_value(entities,'intent_tracking_number') 
+    
+    if (delivery_num == '1234') | (delivery_num == '5678'):
+        context['delivery_check'] = 'It will be arrival at 2pm today!'
+    else:
+        context['delivery_check'] = 'Tracking Numbers are not valid.'
+    return context
 
 actions = {
     'send': send,
